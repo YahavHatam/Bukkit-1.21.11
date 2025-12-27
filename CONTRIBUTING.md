@@ -1,497 +1,1443 @@
-# How to Contribute
+# Contributing to Bukkit 1.21.11
 
-The Bukkit project prides itself on being community built and driven.  We love it when members of our community want to jump right in and get involved, so here's what you need to know.
+Welcome to the Bukkit 1.21.11 clean fork! This is a community-driven project focused on maintaining a stable Bukkit API without Bedrock support.
 
-## Quick Guide
-1. Create or find an issue to address on our [JIRA issue tracker](http://leaky.bukkit.org).
-- Does your proposed change [fit Bukkit's goals](#does-the-change-fit-bukkits-goals)?
-- Fork the repository if you haven't done so already.
-- Make your changes in a new branch (if your change affects both Bukkit and CraftBukkit, we highly suggest you use the same name for your branches in both repos).
-- Test your changes.
-- Push to your fork and submit a pull request.
-- **Note:** The project is put under a code freeze leading up to the release of a Minecraft update in order to give the Bukkit team a static code base to work on.
+## Quick Start
 
-![Life Cycle of a Bukkit Improvement](http://i.imgur.com/Ed6T7AE.png)
+1. **Check existing issues** on GitHub before starting
+2. **Fork the repository** 
+3. **Create a descriptive branch** for your changes
+4. **Make your changes** following our guidelines
+5. **Test thoroughly** 
+6. **Submit a pull request** with clear description
 
-## Getting Started
-- You'll need a free [JIRA account](http://leaky.bukkit.org) (on our issue tracker affectionately called Leaky).
-- You'll need a free [GitHub account](https://github.com/signup/free).
-- Make sure you have a JIRA ticket for your issue at hand.
-    * Either search the list of current issues and find an appropriate issue.
-    * Or create one yourself if one does not already exist.
-        * When creating an issue, make sure to clearly describe the issue (including steps to reproduce it if it is a bug).
-- Fork the repository on GitHub.
-- **Note:** The project is put under a code freeze leading up to the release of a Minecraft update in order to give the Bukkit team a static code base to work on.
+## What We Accept
 
-## Does the Change Fit Bukkit's Goals?
-As a rough guideline, ask yourself the following questions to determine if your proposed change fits the Bukkit project's goals. Please remember that this is only a rough guideline and may or may not reflect the definitive answer to this question.
+- **Bug fixes** that maintain API compatibility
+- **Performance improvements** 
+- **Documentation enhancements**
+- **Reasonable feature additions** that don't break existing plugins
+- **Code cleanup** and refactoring
 
-* Does it expose an implementation detail of the server software, the protocol or file formats?
+## Coding Standards
 
-    If your change revolves around an implementation detail then it is not proper API design. Examples of bad API design would be along the lines of a packet API, an NBT storage API, or basing an enum on implementation values.
+### Requirements
+- **Java 21** compatibility
+- **4 spaces** for indentation (no tabs)
+- **No trailing whitespace**
+- **LF line endings** (not CRLF)
+- **Newline at end of every file**
+- **Alphabetical imports** grouped by package
+
+### Example Import Organization
+```java
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+```
+
+### Code Style
+- Follow standard Java conventions
+- Include Javadoc for public methods/classes
+- Keep methods focused and concise
+- Use descriptive variable names
+- Avoid magic numbers - use constants
+
+## Commit Guidelines
+
+### Format
+```
+Brief summary of changes
+
+Detailed description explaining what the change does, 
+why it's needed, and how it addresses the issue.
+Keep lines under 78 characters.
+```
+
+### Examples
+```
+Fix player teleportation validation
+
+Added null checks for teleport destination to prevent
+NullPointerException when teleporting to invalid locations.
+```
+
+```
+Add configuration option for spawn protection
+
+New config option 'spawn-protection-radius' allows server
+administrators to customize the protected spawn area size.
+```
+
+## Making Changes
+
+### Before You Start
+- Search existing issues and pull requests
+- Ensure your change fits project goals
+- Plan your approach to minimize impact
+
+### During Development
+- Make small, focused commits
+- Test your changes as you go
+- Ensure code compiles without errors
+- Check for unnecessary whitespace: `git diff --check`
+
+### Testing
+- Test with existing plugins if possible
+- Verify no regression in functionality
+- Test edge cases and error conditions
+- Include unit tests for new features
+
+## Pull Request Process
+
+### PR Title
+Use a clear, descriptive title:
+- `Fix: brief description of bug fix`
+- `Add: brief description of new feature` 
+- `Update: brief description of documentation change`
+
+### PR Description
+Include:
+- **Problem**: What issue does this address?
+- **Solution**: How does this PR fix it?
+- **Testing**: How did you test this change?
+- **Impact**: Any breaking changes or compatibility notes?
+
+### PR Checklist
+- [ ] Code compiles without errors
+- [ ] Follows coding standards
+- [ ] Includes tests if applicable
+- [ ] Documentation updated if needed
+- [ ] No breaking changes without justification
+
+## API Compatibility
+
+This fork maintains **full API compatibility** with Bukkit. When contributing:
+
+- **DO NOT** remove or change public API methods
+- **DO NOT** change method signatures
+- **DO NOT** remove events
+- **DO** add new methods and events
+- **DO** deprecate old methods before removal (if ever needed)
+
+## Examples
+
+### Adding a New Event
+```java
+/**
+ * Called when a player achieves something
+ */
+public class PlayerAchievementEvent extends PlayerEvent {
+    private final String achievement;
     
-* Does it result in unexpected behaviour as defined by the Vanilla specification?
-
-    One of  the goals of the Bukkit project is to be an extended Minecraft vanilla server - meaning: if you choose to run the Bukkit server without any plugins, it should function exactly as the Minecraft server would with some rare exceptions. If your change alters the behaviour of the server in such a way that you would not have the same experience as you would in Vanilla, your change does not fit the Bukkit project's goals.
-
-* Does it expose an issue or vulnerability when operating within the Vanilla environment?
-
-    One of the goals of the Bukkit project is to be able to operate within the limitations of the Vanilla environment. If your change results in or exposes the ability to, for example, crash the client when invalid data is set, it does not fit the Bukkit project's needs.
-    
-If you answered yes to any of these questions, chances are high your change does not fit the Bukkit project's goals and will most likely not be accepted. Regardless, there are a few other important questions you need to ask yourself before you start working on a change:
-
-* Is this change reasonably supportable and maintainable?
-
-* Is this change future proof?
-
-## Making the Changes
-* Create a branch on your fork where you'll be making your changes.
-    * Name your branch something relevant to the change you are looking to make.
-    * Note: if your changes affect both Bukkit and CraftBukkit, it is highly suggested you use the same branch name on both repos.
-    * To create a branch in Git;
-        * `git branch relevantBranchName`
-        * Then checkout the new branch with `git checkout relevantBranchName`
-* Check for unnecessary whitespace with `git diff --check` before committing.
-* Make sure your code meets [our requirements](#code-requirements).
-* If the work you want to do involves editing Minecraft classes, be sure to read over the [Using Minecraft Internals](#using-minecraft-internals) section.
-* Make sure your commit messages are in the [proper format](#commit-message-example).
-* Test your changes to make sure it actually addresses the issue it should.
-* Make sure your code compiles under Java 6, as that is what the project has to be built with.
-
-### Code Requirements
-* We generally follow the [Sun/Oracle coding standards](http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html).
-
-* No tabs; use 4 spaces instead.
-
-* No trailing whitespaces.
-
-* No CRLF line endings, LF only, set your Gits 'core.autocrlf' to 'true'.
-
-    These whitespace requirements are easily and often overlooked.  They are critical formatting requirements designed to help simplify a shared heterogeneous development environment.  Learn how your IDE functions in order to show you these characters and verify them.  Analyse the git diff closely to verify every character and if the PR should include the character change.  It is tedious and it is critical.
-    
-    Eclipse: http://stackoverflow.com/a/11596227/532590  
-    NetBeans: http://stackoverflow.com/a/1866385/532590
-
-* No 80 column limit or 'weird' midstatement newlines.
-
-* Any major additions should have documentation ready and provided if applicable (this is usually the case).
-
-* Try to follow test driven development where applicable.
-
-    Bukkit employs JUnit (http://www.vogella.com/articles/JUnit/article.html) for testing and PRs should attempt to integrate with that framework as appropriate.  Bukkit is a large project and what seems simple to a PR author at the time of writing a PR may easily be overlooked later by other authors and updates.  Including unit tests with your PR will help to ensure the PR can be easily maintained over time and encourage the Bukkit Team to pull the PR.
-    
-* There needs to be a new line at the end of every file.
-
-* Imports should be organised by alphabetical order, separated and grouped by package.
-
-    **For example:**
-
-    ```java
-    import java.io.ByteArrayInputStream;
-    import java.io.DataInputStream;
-    import java.io.IOException;
-    import java.util.ArrayList;
-    import java.util.Iterator;
-    import java.util.Random;
-    import java.util.concurrent.Callable;
-    
-    // CraftBukkit start
-    import java.io.UnsupportedEncodingException;
-    import java.util.concurrent.ExecutionException;
-    import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-    import java.util.logging.Level;
-    import java.util.HashSet;
-    
-    import org.bukkit.Bukkit;
-    import org.bukkit.Location;
-    import org.bukkit.craftbukkit.CraftWorld;
-    import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-    import org.bukkit.craftbukkit.inventory.CraftItemStack;
-    import org.bukkit.craftbukkit.util.LazyPlayerSet;
-    import org.bukkit.craftbukkit.util.Waitable;
-    import org.bukkit.craftbukkit.entity.CraftPlayer;
-    import org.bukkit.craftbukkit.event.CraftEventFactory;
-    import org.bukkit.entity.Player;
-    import org.bukkit.event.Event;
-    import org.bukkit.event.block.Action;
-    import org.bukkit.event.block.SignChangeEvent;
-    import org.bukkit.event.player.AsyncPlayerChatEvent;
-    import org.bukkit.event.player.PlayerAnimationEvent;
-    import org.bukkit.event.player.PlayerChatEvent;
-    import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-    import org.bukkit.event.player.PlayerInteractEntityEvent;
-    import org.bukkit.event.player.PlayerItemHeldEvent;
-    import org.bukkit.event.player.PlayerKickEvent;
-    import org.bukkit.event.player.PlayerMoveEvent;
-    import org.bukkit.event.player.PlayerTeleportEvent;
-    import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-    import org.bukkit.event.player.PlayerToggleSneakEvent;
-    import org.bukkit.event.player.PlayerToggleSprintEvent;
-    import org.bukkit.event.inventory.*;
-    import org.bukkit.event.inventory.InventoryType.SlotType;
-    import org.bukkit.event.player.PlayerPortalEvent;
-    import org.bukkit.event.player.PlayerToggleFlightEvent;
-    import org.bukkit.inventory.CraftingInventory;
-    import org.bukkit.inventory.InventoryView;
-    // CraftBukkit end
-    ```
-
-### Using Minecraft Internals
-#### Importing a New Minecraft Class
-When contributing to the Bukkit project, you will likely find that you need to edit a Minecraft class that isn't already found within the project. In this case, you need to look at [our mc-dev repository](https://github.com/Bukkit/mc-dev), find the class you need, add it to the CraftBukkit repo and include it in its own special commit separate from your other changes. The commit message of this special commit should simply be "Add x for diff visibility", where x is the name of the file you are adding from mc-dev.
-
-If, however, you need to import multiple files from mc-dev into the Bukkit project, they should all be contained in the same special commit with the commit message "Add files for diff visibility". Note how the commit message no longer specifically mentions any class names.
-
-#### Making Changes to Minecraft Classes
-The Bukkit project employs a Minimal Diff policy to help guide when changes should be made to Minecraft classes and what those changes should be. This is to ensure that any changes made have the smallest impact possible on the update process we go through whenever a Minecraft update is released. As well as keeping the Minimal Diff policy in mind, every change made to a Minecraft class needs to be marked as such with the appropriate CraftBukkit comment.
-
-##### Minimal Diff Policy
-The Minimal Diff policy is a really important part of the project as it reminds us that every change to the Minecraft Internals has an impact on our update process. When people think of the phrase "minimal diffs", they often take it to the extreme - they go completely out of their way to abstract the changes they are trying to make away from editing Minecraft's classes as much as possible. However, this isn't what we mean by "minimal diffs". Instead, when trying to understand the minimal diffs policy, it helps to keep in mind its end goal: to reduce the impact changes we make to Minecraft's internals have on our update process.
-
-Put simply, the Minimal Diffs Policy simply means to make the smallest change in a Minecraft class possible without duplicating logic.
-
-Here are a few tips you should keep in mind or common areas you should focus on:
-
-* Try to avoid duplicating logic or code when making changes.
-
-* Try to keep your changes easily discernible - don't nest or group several unrelated changes together.
-
-* If you only use an import once within a class, don't import it and use fully qualified names instead.
-
-* Try to employ "short circuiting" of logic if at all possible. This means that you should force a conditional to be the value needed to side-step the code block if you would like to ignore that block of code.
-
-    **For example, to short circuit this:**
-    
-    ```java
-        if (!this.world.isStatic && !this.dead && d0 * d0 + d1 * d1 + d2 * d2 > 0.0D) {
-            this.die();
-            this.h();
-        }
-    ```
-    **You would do this:**
-    
-    ```java
-        if (false && !this.world.isStatic && !this.dead && d0 * d0 + d1 * d1 + d2 * d2 > 0.0D) { // CraftBukkit - not needed
-            this.die();
-            this.h();
-        }
-    ```
-
-* When adding a validation check, see if the Validate package we already use has a better, more concise method you can use instead.
-
-    **For example, you should use:**
-    
-    ```java
-    Validate.notNull(sender, "Sender cannot be null");
-    ```
-
-   **Instead of:**
-   
-    ```java
-    if (sender == null) {
-        throw new IllegalArgumentException("Sender cannot be null");
+    public PlayerAchievementEvent(Player player, String achievement) {
+        super(player);
+        this.achievement = achievement;
     }
-    ```
-
-* When the change you are attempting to make involves removing code, instead of removing it outright, you should comment it out. 
-
-    **For example:**
     
-    ```java
-    // CraftBukkit start - special case dropping so we can get info from the tile entity
-    public void dropNaturally(World world, int i, int j, int k, int l, float f, int i1) {
-        if (world.random.nextFloat() < f) {
-            ItemStack itemstack = new ItemStack(Item.SKULL.id, 1, this.getDropData(world, i, j, k));
-            TileEntitySkull tileentityskull = (TileEntitySkull) world.getTileEntity(i, j, k);
+    public String getAchievement() {
+        return achievement;
+    }
+}
+```
 
-            if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0) {
-                itemstack.setTag(new NBTTagCompound());
-                itemstack.getTag().setString("SkullOwner", tileentityskull.getExtraType());
+### Firing an Event
+```java
+PlayerAchievementEvent event = new PlayerAchievementEvent(player, "first.join");
+Bukkit.getServer().getPluginManager().callEvent(event);
+```
+
+## Getting Help
+
+- **GitHub Issues**: Report bugs and request features
+- **Pull Requests**: For code contributions
+- **Discussions**: For questions and general discussion
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the same license as the original Bukkit project.
+
+## Development Guidelines
+
+### Plugin API Design Principles
+
+When extending the Bukkit API, follow these design principles:
+
+#### 1. Backward Compatibility
+- Never remove or change existing public methods
+- Use `@Deprecated` annotations for methods planned for removal
+- Provide migration paths for deprecated APIs
+- Maintain binary compatibility between minor versions
+
+#### 2. Event System Design
+- Events should be immutable where possible
+- Provide both synchronous and asynchronous variants when appropriate
+- Include comprehensive event cancellation support
+- Document event firing order and dependencies
+
+#### 3. Configuration Management
+- Use Bukkit's built-in configuration system
+- Provide sensible defaults for all settings
+- Validate configuration values on load
+- Support configuration reloading without server restart
+
+#### 4. Performance Considerations
+- Avoid object allocation in hot paths
+- Use efficient data structures for frequent operations
+- Consider thread safety for multi-threaded environments
+- Profile critical code paths before optimization
+
+### Code Architecture Patterns
+
+#### Service Pattern
+```java
+/**
+ * Example service for managing player data
+ */
+public interface PlayerDataService {
+    /**
+     * Gets player data by UUID
+     * @param uuid Player UUID
+     * @return Player data or null if not found
+     */
+    PlayerData getPlayerData(UUID uuid);
+    
+    /**
+     * Sets player data
+     * @param uuid Player UUID
+     * @param data Player data to store
+     */
+    void setPlayerData(UUID uuid, PlayerData data);
+    
+    /**
+     * Removes player data
+     * @param uuid Player UUID
+     * @return True if data was removed
+     */
+    boolean removePlayerData(UUID uuid);
+}
+
+public class PlayerDataServiceImpl implements PlayerDataService {
+    private final Map<UUID, PlayerData> playerDataCache = new ConcurrentHashMap<>();
+    
+    @Override
+    public PlayerData getPlayerData(UUID uuid) {
+        return playerDataCache.get(uuid);
+    }
+    
+    @Override
+    public void setPlayerData(UUID uuid, PlayerData data) {
+        playerDataCache.put(uuid, data);
+    }
+    
+    @Override
+    public boolean removePlayerData(UUID uuid) {
+        return playerDataCache.remove(uuid) != null;
+    }
+}
+```
+
+#### Factory Pattern
+```java
+/**
+ * Factory for creating different types of events
+ */
+public class EventFactory {
+    /**
+     * Creates a custom player event
+     * @param player The player involved
+     * @param type Event type
+     * @return Custom event instance
+     */
+    public static CustomPlayerEvent createCustomEvent(Player player, EventType type) {
+        switch (type) {
+            case JOIN:
+                return new CustomPlayerJoinEvent(player);
+            case LEAVE:
+                return new CustomPlayerLeaveEvent(player);
+            case ACHIEVEMENT:
+                return new CustomPlayerAchievementEvent(player);
+            default:
+                throw new IllegalArgumentException("Unknown event type: " + type);
+        }
+    }
+}
+```
+
+#### Builder Pattern
+```java
+/**
+ * Builder for complex configuration objects
+ */
+public class ConfigurationBuilder {
+    private boolean debugMode = false;
+    private int maxPlayers = 20;
+    private String serverName = "Bukkit Server";
+    private List<String> allowedCommands = new ArrayList<>();
+    
+    public ConfigurationBuilder setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
+        return this;
+    }
+    
+    public ConfigurationBuilder setMaxPlayers(int maxPlayers) {
+        this.maxPlayers = maxPlayers;
+        return this;
+    }
+    
+    public ConfigurationBuilder setServerName(String serverName) {
+        this.serverName = serverName;
+        return this;
+    }
+    
+    public ConfigurationBuilder addAllowedCommand(String command) {
+        this.allowedCommands.add(command);
+        return this;
+    }
+    
+    public ServerConfiguration build() {
+        return new ServerConfiguration(debugMode, maxPlayers, serverName, allowedCommands);
+    }
+}
+```
+
+### Testing Strategies
+
+#### Unit Testing
+```java
+/**
+ * Example unit test for PlayerManager
+ */
+public class PlayerManagerTest {
+    private PlayerManager playerManager;
+    private Server mockServer;
+    
+    @Before
+    public void setUp() {
+        mockServer = mock(Server.class);
+        playerManager = new PlayerManager(mockServer);
+    }
+    
+    @Test
+    public void testAddPlayer() {
+        Player mockPlayer = mock(Player.class);
+        when(mockPlayer.getUniqueId()).thenReturn(UUID.randomUUID());
+        
+        assertTrue(playerManager.addPlayer(mockPlayer));
+        assertEquals(1, playerManager.getPlayerCount());
+    }
+    
+    @Test
+    public void testRemovePlayer() {
+        Player mockPlayer = mock(Player.class);
+        UUID playerId = UUID.randomUUID();
+        when(mockPlayer.getUniqueId()).thenReturn(playerId);
+        
+        playerManager.addPlayer(mockPlayer);
+        assertTrue(playerManager.removePlayer(playerId));
+        assertEquals(0, playerManager.getPlayerCount());
+    }
+    
+    @Test
+    public void testGetPlayerByUUID() {
+        Player mockPlayer = mock(Player.class);
+        UUID playerId = UUID.randomUUID();
+        when(mockPlayer.getUniqueId()).thenReturn(playerId);
+        
+        playerManager.addPlayer(mockPlayer);
+        assertEquals(mockPlayer, playerManager.getPlayer(playerId));
+    }
+}
+```
+
+#### Integration Testing
+```java
+/**
+ * Example integration test for plugin functionality
+ */
+public class PluginIntegrationTest {
+    private Server mockServer;
+    private PluginManager mockPluginManager;
+    private TestPlugin testPlugin;
+    
+    @Before
+    public void setUp() {
+        mockServer = mock(Server.class);
+        mockPluginManager = mock(PluginManager.class);
+        when(mockServer.getPluginManager()).thenReturn(mockPluginManager);
+        
+        testPlugin = new TestPlugin();
+        testPlugin.onLoad();
+    }
+    
+    @Test
+    public void testPluginEnable() {
+        assertTrue(testPlugin.onEnable());
+        verify(mockPluginManager).registerEvents(any(Listener.class), eq(testPlugin));
+    }
+    
+    @Test
+    public void testEventFiring() {
+        Player mockPlayer = mock(Player.class);
+        PlayerJoinEvent event = new PlayerJoinEvent(mockPlayer, "Player joined");
+        
+        // Test that our plugin handles the event correctly
+        testPlugin.onPlayerJoin(event);
+        // Add assertions based on expected behavior
+    }
+}
+```
+
+### Performance Optimization
+
+#### Memory Management
+```java
+/**
+ * Example of efficient object pooling
+ */
+public class ParticlePool {
+    private final Queue<Particle> particlePool = new ConcurrentLinkedQueue<>();
+    private final int maxPoolSize;
+    
+    public ParticlePool(int maxPoolSize) {
+        this.maxPoolSize = maxPoolSize;
+    }
+    
+    public Particle acquire() {
+        Particle particle = particlePool.poll();
+        if (particle == null) {
+            particle = new Particle();
+        }
+        return particle;
+    }
+    
+    public void release(Particle particle) {
+        if (particlePool.size() < maxPoolSize) {
+            particle.reset();
+            particlePool.offer(particle);
+        }
+    }
+}
+```
+
+#### Caching Strategies
+```java
+/**
+ * Example of efficient caching with expiration
+ */
+public class CacheManager<K, V> {
+    private final Map<K, CacheEntry<V>> cache = new ConcurrentHashMap<>();
+    private final long expirationTime;
+    
+    public CacheManager(long expirationTime, TimeUnit unit) {
+        this.expirationTime = unit.toMillis(expirationTime);
+    }
+    
+    public V get(K key) {
+        CacheEntry<V> entry = cache.get(key);
+        if (entry == null || entry.isExpired()) {
+            cache.remove(key);
+            return null;
+        }
+        return entry.getValue();
+    }
+    
+    public void put(K key, V value) {
+        cache.put(key, new CacheEntry<>(value, System.currentTimeMillis() + expirationTime));
+    }
+    
+    private static class CacheEntry<V> {
+        private final V value;
+        private final long expirationTime;
+        
+        CacheEntry(V value, long expirationTime) {
+            this.value = value;
+            this.expirationTime = expirationTime;
+        }
+        
+        V getValue() {
+            return value;
+        }
+        
+        boolean isExpired() {
+            return System.currentTimeMillis() > expirationTime;
+        }
+    }
+}
+```
+
+### Security Best Practices
+
+#### Input Validation
+```java
+/**
+ * Example of comprehensive input validation
+ */
+public class InputValidator {
+    private static final Pattern PLAYER_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]{1,16}$");
+    private static final int MAX_MESSAGE_LENGTH = 256;
+    
+    /**
+     * Validates player name
+     * @param playerName Player name to validate
+     * @return True if valid
+     */
+    public static boolean isValidPlayerName(String playerName) {
+        return playerName != null && 
+               PLAYER_NAME_PATTERN.matcher(playerName).matches();
+    }
+    
+    /**
+     * Validates chat message
+     * @param message Message to validate
+     * @return True if valid
+     */
+    public static boolean isValidChatMessage(String message) {
+        return message != null && 
+               message.length() <= MAX_MESSAGE_LENGTH &&
+               !message.contains("\u0000"); // Null byte check
+    }
+    
+    /**
+     * Sanitizes command arguments
+     * @param args Command arguments
+     * @return Sanitized arguments
+     */
+    public static String[] sanitizeCommandArgs(String[] args) {
+        return Arrays.stream(args)
+                .filter(arg -> arg != null && !arg.trim().isEmpty())
+                .map(arg -> arg.replaceAll("[^a-zA-Z0-9_\\-]", ""))
+                .toArray(String[]::new);
+    }
+}
+```
+
+#### Permission Checking
+```java
+/**
+ * Example of comprehensive permission checking
+ */
+public class PermissionChecker {
+    private final Server server;
+    
+    public PermissionChecker(Server server) {
+        this.server = server;
+    }
+    
+    /**
+     * Checks if player has permission
+     * @param player Player to check
+     * @param permission Permission node
+     * @return True if player has permission
+     */
+    public boolean hasPermission(Player player, String permission) {
+        if (player == null || permission == null) {
+            return false;
+        }
+        
+        // Check explicit permission
+        if (player.hasPermission(permission)) {
+            return true;
+        }
+        
+        // Check wildcard permissions
+        String[] parts = permission.split("\\.");
+        for (int i = parts.length - 1; i > 0; i--) {
+            String wildcard = String.join(".", Arrays.copyOf(parts, i)) + ".*";
+            if (player.hasPermission(wildcard)) {
+                return true;
             }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Checks if player is operator
+     * @param player Player to check
+     * @return True if player is operator
+     */
+    public boolean isOperator(Player player) {
+        return player != null && player.isOp();
+    }
+}
+```
 
-            this.b(world, i, j, k, itemstack);
+### Error Handling and Logging
+
+#### Exception Handling
+```java
+/**
+ * Example of comprehensive exception handling
+ */
+public class ExceptionHandler {
+    private static final Logger logger = Logger.getLogger("Bukkit");
+    
+    /**
+     * Handles exceptions with proper logging
+     * @param context Context where error occurred
+     * @param exception The exception
+     * @param fallback Fallback action
+     */
+    public static void handleException(String context, Exception exception, Runnable fallback) {
+        logger.log(Level.SEVERE, "Exception in " + context, exception);
+        
+        if (fallback != null) {
+            try {
+                fallback.run();
+            } catch (Exception fallbackException) {
+                logger.log(Level.SEVERE, "Fallback action failed", fallbackException);
+            }
         }
     }
-    // CraftBukkit end
-
-    public void a(World world, int i, int j, int k, int l, EntityHuman entityhuman) {
-        if (entityhuman.abilities.canInstantlyBuild) {
-            l |= 8;
-            world.setData(i, j, k, l, 4);
+    
+    /**
+     * Handles exceptions with user-friendly messages
+     * @param player Player to notify (optional)
+     * @param userMessage User-friendly message
+     * @param exception The exception
+     */
+    public static void handleException(Player player, String userMessage, Exception exception) {
+        logger.log(Level.WARNING, userMessage, exception);
+        
+        if (player != null && player.isOnline()) {
+            player.sendMessage(ChatColor.RED + "Error: " + userMessage);
         }
-
-        super.a(world, i, j, k, l, entityhuman);
     }
+}
+```
 
-    public void remove(World world, int i, int j, int k, int l, int i1) {
-        if (!world.isStatic) {
-            /* CraftBukkit start - drop item in code above, not here
-            if ((i1 & 8) == 0) {
-                ItemStack itemstack = new ItemStack(Item.SKULL.id, 1, this.getDropData(world, i, j, k));
-                TileEntitySkull tileentityskull = (TileEntitySkull) world.getTileEntity(i, j, k);
+#### Structured Logging
+```java
+/**
+ * Example of structured logging
+ */
+public class StructuredLogger {
+    private final Logger logger;
+    private final String component;
+    
+    public StructuredLogger(String component) {
+        this.logger = Logger.getLogger("Bukkit." + component);
+        this.component = component;
+    }
+    
+    public void logInfo(String message, Object... args) {
+        logger.info(formatMessage("INFO", message, args));
+    }
+    
+    public void logWarning(String message, Object... args) {
+        logger.warning(formatMessage("WARN", message, args));
+    }
+    
+    public void logError(String message, Throwable throwable, Object... args) {
+        logger.severe(formatMessage("ERROR", message, args));
+        if (throwable != null) {
+            logger.log(Level.SEVERE, "Stack trace:", throwable);
+        }
+    }
+    
+    private String formatMessage(String level, String message, Object... args) {
+        String timestamp = Instant.now().toString();
+        String formattedMessage = String.format(message, args);
+        return String.format("[%s] [%s] [%s] %s", timestamp, level, component, formattedMessage);
+    }
+}
+```
 
-                if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0) {
-                    itemstack.setTag(new NBTTagCompound());
-                    itemstack.getTag().setString("SkullOwner", tileentityskull.getExtraType());
+### Configuration Management
+
+#### Configuration Examples
+```java
+/**
+ * Example of configuration management
+ */
+public class Configuration extends FileConfiguration {
+    private final Map<String, Object> defaults;
+    private final Set<String> requiredKeys;
+    
+    public Configuration() {
+        this.defaults = new HashMap<>();
+        this.requiredKeys = new HashSet<>();
+        initializeDefaults();
+    }
+    
+    private void initializeDefaults() {
+        defaults.put("server.name", "Bukkit Server");
+        defaults.put("server.max-players", 20);
+        defaults.put("server.debug", false);
+        defaults.put("database.url", "jdbc:sqlite:plugins.db");
+        
+        requiredKeys.add("server.name");
+        requiredKeys.add("server.max-players");
+    }
+    
+    @Override
+    public void set(String path, Object value) {
+        if (value == null) {
+            logger.warning("Attempting to set null value for path: " + path);
+            return;
+        }
+        
+        // Validate value type
+        if (!isValidType(path, value)) {
+            logger.warning("Invalid type for path " + path + ": " + value.getClass().getSimpleName());
+            return;
+        }
+        
+        super.set(path, value);
+    }
+    
+    @Override
+    public Object get(String path) {
+        Object value = super.get(path);
+        if (value == null && defaults.containsKey(path)) {
+            return defaults.get(path);
+        }
+        return value;
+    }
+    
+    public boolean validateConfiguration() {
+        List<String> missingKeys = requiredKeys.stream()
+                .filter(key -> !contains(key))
+                .collect(Collectors.toList());
+        
+        if (!missingKeys.isEmpty()) {
+            logger.severe("Missing required configuration keys: " + String.join(", ", missingKeys));
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private boolean isValidType(String path, Object value) {
+        // Add type validation logic based on path patterns
+        if (path.startsWith("server.max-")) {
+            return value instanceof Number;
+        }
+        if (path.endsWith(".enabled")) {
+            return value instanceof Boolean;
+        }
+        return true;
+    }
+}
+```
+
+### Database Integration
+
+#### Database Connection Pool
+```java
+/**
+ * Example of database connection pooling
+ */
+public class DatabaseManager {
+    private final HikariDataSource dataSource;
+    private final StructuredLogger logger;
+    
+    public DatabaseManager(DatabaseConfig config) {
+        this.logger = new StructuredLogger("Database");
+        this.dataSource = createDataSource(config);
+    }
+    
+    private HikariDataSource createDataSource(DatabaseConfig config) {
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(config.getUrl());
+        hikariConfig.setUsername(config.getUsername());
+        hikariConfig.setPassword(config.getPassword());
+        hikariConfig.setMaximumPoolSize(config.getMaxPoolSize());
+        hikariConfig.setMinimumIdle(config.getMinIdle());
+        hikariConfig.setConnectionTimeout(config.getConnectionTimeout());
+        hikariConfig.setIdleTimeout(config.getIdleTimeout());
+        
+        return new HikariDataSource(hikariConfig);
+    }
+    
+    /**
+     * Executes a query with result mapping
+     * @param sql SQL query
+     * @param mapper Result mapper
+     * @param parameters Query parameters
+     * @return List of mapped results
+     */
+    public <T> List<T> query(String sql, RowMapper<T> mapper, Object... parameters) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            
+            // Set parameters
+            for (int i = 0; i < parameters.length; i++) {
+                statement.setObject(i + 1, parameters[i]);
+            }
+            
+            // Execute query
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<T> results = new ArrayList<>();
+                while (resultSet.next()) {
+                    results.add(mapper.mapRow(resultSet));
                 }
-
-                this.b(world, i, j, k, itemstack);
+                return results;
             }
-            // CraftBukkit end */
-
-            super.remove(world, i, j, k, l, i1);
+        } catch (SQLException e) {
+            logger.logError("Database query failed", e);
+            throw new DatabaseException("Query execution failed", e);
         }
     }
-    ```
-
-##### General Guidelines
-When editing Minecraft's classes, we have a set of rules and guidelines that need to be followed to keep us sane when it comes time for us to update Bukkit.  
-
-**CraftBukkit comments**  
-Changes to a Minecraft class should be clearly marked using CraftBukkit comments. Here are a few tips to help explain what kind of CraftBukkit comment to use and where to use them:
-
-* Regardless of what kind of CraftBukkit comment you use, please take care to be explicit and exact with your usage. If the "C" in "CraftBukkit" is capitalised in the example, you should capitalise it when you use it. If the "start" begins with a lowercase "s", you should make sure yours does too.
-
-* If the change only affects one line of code, you should use an end of line CraftBukkit comment.
-
-    **Examples:**
     
-    If the change is obvious when looking at the diff, then you just need a simple end of line CraftBukkit comment.
-    
-    ```java
-    if (true || minecraftserver.getAllowNether()) { // CraftBukkit
-    ```
-
-    If, however, the change is something important to note or difficult to discern, you should include a reason at the end of the end of line CraftBukkit comment.
-    
-    ```java
-    public int fireTicks; // CraftBukkit - private -> public
-    ```
-    
-    If adding the CraftBukkit comment to the end of the line negatively affects the readability of the code, then you should place the CraftBukkit comment on a new line above the change you made.
-    
-    ```java
-        // CraftBukkit
-        if (!isEffect && !world.isStatic && world.difficulty >= 2 && world.areChunksLoaded(MathHelper.floor(d0), MathHelper.floor(d1), MathHelper.floor(d2), 10)) {
-    ```
-
-* If the change affects more than one line, you should use a multi-line CraftBukkit comment.
-
-    **Examples:**
-    
-    The majority of the time multi-line changes should be accompanied by a reason since they're usually much more complicated than a single line change. We'd like to suggest you follow the same rule as above: if the change is something important to note or difficult to discern, you should include a reason at the end of the end of line CraftBukkit comment, however it is not always clear if this is the case. Looking through the code in the project, you'll see that we sometimes include a reason when we should have left it off and vice versa.
-    
-    ```java
-    // CraftBukkit start - special case dropping so we can get info from the tile entity
-    public void dropNaturally(World world, int i, int j, int k, int l, float f, int i1) {
-        if (world.random.nextFloat() < f) {
-            ItemStack itemstack = new ItemStack(Item.SKULL.id, 1, this.getDropData(world, i, j, k));
-            TileEntitySkull tileentityskull = (TileEntitySkull) world.getTileEntity(i, j, k);
-
-            if (tileentityskull.getSkullType() == 3 && tileentityskull.getExtraType() != null && tileentityskull.getExtraType().length() > 0) {
-                itemstack.setTag(new NBTTagCompound());
-                itemstack.getTag().setString("SkullOwner", tileentityskull.getExtraType());
+    /**
+     * Executes an update statement
+     * @param sql SQL update
+     * @param parameters Update parameters
+     * @return Number of affected rows
+     */
+    public int update(String sql, Object... parameters) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            
+            for (int i = 0; i < parameters.length; i++) {
+                statement.setObject(i + 1, parameters[i]);
             }
-
-            this.b(world, i, j, k, itemstack);
+            
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            logger.logError("Database update failed", e);
+            throw new DatabaseException("Update execution failed", e);
         }
     }
-    // CraftBukkit end
-    ````
     
-    Otherwise, just use a multi-line CraftBukkit comment without a reason.
+    public void close() {
+        if (dataSource != null && !dataSource.isClosed()) {
+            dataSource.close();
+            logger.logInfo("Database connection pool closed");
+        }
+    }
+}
+```
+
+### Network Communication
+
+#### Packet Handling
+```java
+/**
+ * Example of custom packet handling
+ */
+public class PacketHandler {
+    private final Map<Integer, PacketProcessor> processors = new ConcurrentHashMap<>();
+    private final StructuredLogger logger;
     
-    ```java
-                // CraftBukkit start
-                BlockIgniteEvent event = new BlockIgniteEvent(this.cworld.getBlockAt(i, j, k), BlockIgniteEvent.IgniteCause.LIGHTNING, null);
-                world.getServer().getPluginManager().callEvent(event);
-
-                if (!event.isCancelled()) {
-                    world.setTypeIdUpdate(i, j, k, Block.FIRE.id);
-                }
-                // CraftBukkit end
-    ```
-
-* CraftBukkit comments should be on the same indentation level of the code block it is in.
-
-    **For example:**
+    public PacketHandler() {
+        this.logger = new StructuredLogger("PacketHandler");
+        registerProcessors();
+    }
     
-    ```java
-                        if (j == 1) {
-                            // CraftBukkit start - store a reference
-                            ItemStack itemstack4 = playerinventory.getCarried();
-                            if (itemstack4.count > 0) {
-                                entityhuman.drop(itemstack4.a(1));
-                            }
-
-                            if (itemstack4.count == 0) {
-                                // CraftBukkit end
-                                playerinventory.setCarried((ItemStack) null);
-                            }
-                        }
-    ```
-
-**Other guidelines**  
-
-* When adding imports to a Minecraft class, they should be organised by alphabetical order, separated and grouped by package.
-
-    **For example:**
-
-    ```java
-    import java.io.ByteArrayInputStream;
-    import java.io.DataInputStream;
-    import java.io.IOException;
-    import java.util.ArrayList;
-    import java.util.Iterator;
-    import java.util.Random;
-    import java.util.concurrent.Callable;
+    private void registerProcessors() {
+        processors.put(0x01, new KeepAliveProcessor());
+        processors.put(0x02, new ChatMessageProcessor());
+        processors.put(0x03, new PositionUpdateProcessor());
+    }
     
-    // CraftBukkit start
-    import java.io.UnsupportedEncodingException;
-    import java.util.concurrent.ExecutionException;
-    import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-    import java.util.logging.Level;
-    import java.util.HashSet;
+    /**
+     * Processes incoming packet
+     * @param player Player who sent packet
+     * @param packetId Packet ID
+     * @param data Packet data
+     */
+    public void processPacket(Player player, int packetId, byte[] data) {
+        PacketProcessor processor = processors.get(packetId);
+        if (processor == null) {
+            logger.logWarning("Unknown packet ID: " + packetId + " from player: " + player.getName());
+            return;
+        }
+        
+        try {
+            processor.process(player, data);
+        } catch (Exception e) {
+            logger.logError("Error processing packet " + packetId, e);
+            // Optionally disconnect player for malformed packets
+            if (processor.isCritical()) {
+                player.kickPlayer("Packet processing error");
+            }
+        }
+    }
     
-    import org.bukkit.Bukkit;
-    import org.bukkit.Location;
-    import org.bukkit.craftbukkit.CraftWorld;
-    import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-    import org.bukkit.craftbukkit.inventory.CraftItemStack;
-    import org.bukkit.craftbukkit.util.LazyPlayerSet;
-    import org.bukkit.craftbukkit.util.Waitable;
-    import org.bukkit.craftbukkit.entity.CraftPlayer;
-    import org.bukkit.craftbukkit.event.CraftEventFactory;
-    import org.bukkit.entity.Player;
-    import org.bukkit.event.Event;
-    import org.bukkit.event.block.Action;
-    import org.bukkit.event.block.SignChangeEvent;
-    import org.bukkit.event.player.AsyncPlayerChatEvent;
-    import org.bukkit.event.player.PlayerAnimationEvent;
-    import org.bukkit.event.player.PlayerChatEvent;
-    import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-    import org.bukkit.event.player.PlayerInteractEntityEvent;
-    import org.bukkit.event.player.PlayerItemHeldEvent;
-    import org.bukkit.event.player.PlayerKickEvent;
-    import org.bukkit.event.player.PlayerMoveEvent;
-    import org.bukkit.event.player.PlayerTeleportEvent;
-    import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-    import org.bukkit.event.player.PlayerToggleSneakEvent;
-    import org.bukkit.event.player.PlayerToggleSprintEvent;
-    import org.bukkit.event.inventory.*;
-    import org.bukkit.event.inventory.InventoryType.SlotType;
-    import org.bukkit.event.player.PlayerPortalEvent;
-    import org.bukkit.event.player.PlayerToggleFlightEvent;
-    import org.bukkit.inventory.CraftingInventory;
-    import org.bukkit.inventory.InventoryView;
-    // CraftBukkit end
-    ```
+    /**
+     * Registers a new packet processor
+     * @param packetId Packet ID
+     * @param processor Packet processor
+     */
+    public void registerProcessor(int packetId, PacketProcessor processor) {
+        processors.put(packetId, processor);
+        logger.logInfo("Registered packet processor for ID: " + packetId);
+    }
+}
+```
 
-* Do not remove unused imports if they are not marked by CraftBukkit comments.
+### World Management
 
-### Commit Message Example
->   Provide an example commit for CONTRIBUTING.md. Fixes BUKKIT-1
-> 
-> The CONTRIBUTING.md is missing an example commit message.  Without this 
-> commit, we are unable to provide potential contributors with a helpful example, 
-> forcing developers to guess at what an acceptable commit message would look 
-> like. This commit fixes this issue by providing a clear and informative example 
-> for contributors to base their work off of.
-
-### Commit Message Expectations
-The first line in a commit message is an imperative statement briefly explaining what the commit is achieving with an associated ticket number from our JIRA, in the form of BUKKIT-#. See the list of acceptable keywords to reference tickets with for more information on this.
-
-The body of the commit message needs to describe how the code behaves without this change, why this is a problem and how this commit addresses it. The body of the commit message should be restricted by a 78 character, plus newline, limit per line (meaning: once you hit about 78 characters, you should explicitly start a new line in the commit message).
+#### Chunk Management
+```java
+/**
+ * Example of efficient chunk management
+ */
+public class ChunkManager {
+    private final Map<ChunkCoordinate, Chunk> loadedChunks = new ConcurrentHashMap<>();
+    private final Queue<ChunkCoordinate> unloadQueue = new ConcurrentLinkedQueue<>();
+    private final int maxLoadedChunks;
+    private final StructuredLogger logger;
     
-Acceptable keywords to reference tickets with:
+    public ChunkManager(int maxLoadedChunks) {
+        this.maxLoadedChunks = maxLoadedChunks;
+        this.logger = new StructuredLogger("ChunkManager");
+    }
+    
+    /**
+     * Loads a chunk
+     * @param coordinate Chunk coordinate
+     * @return Loaded chunk
+     */
+    public Chunk loadChunk(ChunkCoordinate coordinate) {
+        Chunk chunk = loadedChunks.get(coordinate);
+        if (chunk != null) {
+            return chunk;
+        }
+        
+        // Check if we need to unload chunks
+        if (loadedChunks.size() >= maxLoadedChunks) {
+            unloadLeastRecentlyUsedChunk();
+        }
+        
+        // Load new chunk
+        chunk = loadChunkFromDisk(coordinate);
+        loadedChunks.put(coordinate, chunk);
+        
+        logger.logInfo("Loaded chunk at " + coordinate);
+        return chunk;
+    }
+    
+    /**
+     * Unloads a chunk
+     * @param coordinate Chunk coordinate
+     * @return True if chunk was unloaded
+     */
+    public boolean unloadChunk(ChunkCoordinate coordinate) {
+        Chunk chunk = loadedChunks.remove(coordinate);
+        if (chunk != null) {
+            saveChunkToDisk(chunk);
+            logger.logInfo("Unloaded chunk at " + coordinate);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Gets loaded chunk
+     * @param coordinate Chunk coordinate
+     * @return Chunk or null if not loaded
+     */
+    public Chunk getChunk(ChunkCoordinate coordinate) {
+        return loadedChunks.get(coordinate);
+    }
+    
+    private void unloadLeastRecentlyUsedChunk() {
+        // Find least recently used chunk
+        ChunkCoordinate oldestChunk = loadedChunks.keySet().stream()
+                .min(Comparator.comparing(coord -> loadedChunks.get(coord).getLastAccess()))
+                .orElse(null);
+        
+        if (oldestChunk != null) {
+            unloadChunk(oldestChunk);
+        }
+    }
+    
+    private Chunk loadChunkFromDisk(ChunkCoordinate coordinate) {
+        // Implementation for loading chunk from disk
+        return new Chunk(coordinate);
+    }
+    
+    private void saveChunkToDisk(Chunk chunk) {
+        // Implementation for saving chunk to disk
+    }
+}
+```
 
-* **Fixes** BUKKIT-1 - this commit fixes the bug detailed in BUKKIT-1
-* **Adds** BUKKIT-2 - this commit adds the new feature requested by BUKKIT-2
+### Plugin Development
 
-You can reference multiple tickets in a single commit message, for example: "Fixes BUKKIT-1, BUKKIT-2" or "Adds BUKKIT-1, BUKKIT-2" without closing punctuation.
+#### Plugin Lifecycle Management
+```java
+/**
+ * Example of comprehensive plugin lifecycle management
+ */
+public abstract class Plugin extends JavaPlugin {
+    private final List<ManagedService> services = new ArrayList<>();
+    private final StructuredLogger logger;
+    private volatile boolean enabled = false;
+    
+    public Plugin() {
+        this.logger = new StructuredLogger(getName());
+    }
+    
+    @Override
+    public final void onEnable() {
+        if (enabled) {
+            logger.logWarning("Plugin is already enabled");
+            return;
+        }
+        
+        try {
+            // Initialize services
+            initializeServices();
+            
+            // Register events
+            registerEvents();
+            
+            // Register commands
+            registerCommands();
+            
+            // Start services
+            startServices();
+            
+            // Custom enable logic
+            onPluginEnable();
+            
+            enabled = true;
+            logger.logInfo("Plugin enabled successfully");
+            
+        } catch (Exception e) {
+            logger.logError("Failed to enable plugin", e);
+            // Disable plugin on failure
+            getServer().getPluginManager().disablePlugin(this);
+        }
+    }
+    
+    @Override
+    public final void onDisable() {
+        if (!enabled) {
+            logger.logWarning("Plugin is already disabled");
+            return;
+        }
+        
+        try {
+            // Custom disable logic
+            onPluginDisable();
+            
+            // Stop services
+            stopServices();
+            
+            // Cleanup resources
+            cleanup();
+            
+            enabled = false;
+            logger.logInfo("Plugin disabled successfully");
+            
+        } catch (Exception e) {
+            logger.logError("Error during plugin disable", e);
+        }
+    }
+    
+    /**
+     * Initializes plugin services
+     */
+    protected void initializeServices() {
+        // Override in subclasses
+    }
+    
+    /**
+     * Registers event listeners
+     */
+    protected void registerEvents() {
+        // Override in subclasses
+    }
+    
+    /**
+     * Registers commands
+     */
+    protected void registerCommands() {
+        // Override in subclasses
+    }
+    
+    /**
+     * Custom enable logic
+     */
+    protected abstract void onPluginEnable();
+    
+    /**
+     * Custom disable logic
+     */
+    protected abstract void onPluginDisable();
+    
+    /**
+     * Adds a managed service
+     * @param service Service to manage
+     */
+    protected final void addService(ManagedService service) {
+        services.add(service);
+    }
+    
+    private void startServices() {
+        for (ManagedService service : services) {
+            try {
+                service.start();
+                logger.logInfo("Started service: " + service.getName());
+            } catch (Exception e) {
+                logger.logError("Failed to start service: " + service.getName(), e);
+            }
+        }
+    }
+    
+    private void stopServices() {
+        for (ManagedService service : services) {
+            try {
+                service.stop();
+                logger.logInfo("Stopped service: " + service.getName());
+            } catch (Exception e) {
+                logger.logError("Failed to stop service: " + service.getName(), e);
+            }
+        }
+    }
+    
+    private void cleanup() {
+        services.clear();
+    }
+}
+```
 
-## Submitting the Changes
+### Command System
 
-* Push your changes to a topic branch in your fork of the repository.
-* Submit a pull request to the relevant repository in the Bukkit organization.
-    * Make sure your pull request meets [our expectations](#pull-request-formatting-expectations) before submitting.
-    * No merges should be included in any pull requests.
-* Update your JIRA ticket to reflect that you have submitted a pull request and are ready for it to be reviewed.
-    * Include a link to the pull request in the ticket.
-* Follow our [Tips to Get Your Pull Request Accepted](#tips-to-get-your-pull-request-accepted).
-* **Note:** The project is put under a code freeze leading up to the release of a Minecraft update in order to give the Bukkit team a static code base to work on.
-  
-### Pull Request Formatting Expectations
-#### Title
-> [PR Type] Brief summary. Fixes BUKKIT-####  
-> PR Type can be B for Bukkit, C for CraftBukkit, B+C for a PR in both sides
-> 
-> Title Example:  
-> [B+C] Provide an example commit for CONTRIBUTING.md. Fixes BUKKIT-1
+#### Command Handling
+```java
+/**
+ * Example of command system
+ */
+public class CommandManager {
+    private final Map<String, CommandExecutor> commands = new ConcurrentHashMap<>();
+    private final Map<String, CommandPermission> permissions = new ConcurrentHashMap<>();
+    private final StructuredLogger logger;
+    
+    public CommandManager() {
+        this.logger = new StructuredLogger("CommandManager");
+    }
+    
+    /**
+     * Registers a command
+     * @param name Command name
+     * @param executor Command executor
+     * @param permission Required permission
+     */
+    public void registerCommand(String name, CommandExecutor executor, String permission) {
+        commands.put(name.toLowerCase(), executor);
+        permissions.put(name.toLowerCase(), new CommandPermission(permission));
+        logger.logInfo("Registered command: " + name);
+    }
+    
+    /**
+     * Executes a command
+     * @param sender Command sender
+     * @param command Command to execute
+     * @param args Command arguments
+     * @return True if command was executed
+     */
+    public boolean executeCommand(CommandSender sender, String command, String[] args) {
+        CommandExecutor executor = commands.get(command.toLowerCase());
+        if (executor == null) {
+            sender.sendMessage(ChatColor.RED + "Unknown command: " + command);
+            return false;
+        }
+        
+        CommandPermission permission = permissions.get(command.toLowerCase());
+        if (!permission.hasPermission(sender)) {
+            sender.sendMessage(ChatColor.RED + "You don't have permission to use this command");
+            return false;
+        }
+        
+        try {
+            return executor.onCommand(sender, command, args);
+        } catch (Exception e) {
+            logger.logError("Error executing command: " + command, e);
+            sender.sendMessage(ChatColor.RED + "An error occurred while executing the command");
+            return false;
+        }
+    }
+    
+    /**
+     * Gets command suggestions
+     * @param sender Command sender
+     * @param command Partial command
+     * @param args Current arguments
+     * @return List of suggestions
+     */
+    public List<String> getTabCompletions(CommandSender sender, String command, String[] args) {
+        CommandExecutor executor = commands.get(command.toLowerCase());
+        if (executor == null) {
+            return Collections.emptyList();
+        }
+        
+        CommandPermission permission = permissions.get(command.toLowerCase());
+        if (!permission.hasPermission(sender)) {
+            return Collections.emptyList();
+        }
+        
+        try {
+            return executor.onTabComplete(sender, command, args);
+        } catch (Exception e) {
+            logger.logError("Error getting tab completions for command: " + command, e);
+            return Collections.emptyList();
+        }
+    }
+    
+    /**
+     * Gets all registered commands
+     * @return Set of command names
+     */
+    public Set<String> getCommands() {
+        return new HashSet<>(commands.keySet());
+    }
+}
+```
 
-#### Description:  
-> ##### The Issue:
-> Paragraphs explaining what the issue the PR is meant to be addressing.
-> 
-> ##### Justification for this PR:
-> Paragraphs providing justification for the PR
->
-> ##### PR Breakdown:
-> Paragraphs breaking down what the PR is doing, in detail.
-> 
-> ##### Testing Results and Materials:
-> Paragraphs describing what you did to test the code in this PR and links to pre-compiled test binaries and source.
->
-> ##### Relevant PR(s): 
-> This should be links to accompanying PRs, or alternate PRs that attempted to perform the task.  Each reference should have a reason attached as to why it is being referenced (for example: "Similar to PR ### but won't empty your Bukkits").  Accompanying PRs need no explanation, but still need to be linked.
-> 
-> B-#### - https://github.com/Bukkit/Bukkit/pull/#### - Reason  
-> CB-#### - https://github.com/Bukkit/CraftBukkit/pull/#### - Reason
-> 
-> ##### JIRA Ticket: 
-> BUKKIT-#### - https://bukkit.atlassian.net/browse/BUKKIT-####
->
-> ##### Pull Request Check List (For Your Use):
->
->**General:**
->
->- [ ] Fits Bukkit's Goals
->- [ ] Leaky Ticket Ready
->- [ ] Code Meets Requirements
->- [ ] Code is Documented
->- [ ] Code Addresses Leaky Ticket
->- [ ] Followed Pull Request Format
->- [ ] Tested Code
->- [ ] Included Test Material and Source
-> 
->**If Applicable:**
->
->- [ ] Importing New Minecraft Classes In Special Commit
->- [ ] Follows Minimal Diff Policy
->- [ ] Uses Proper CraftBukkit Comments
->- [ ] Imports Are Ordered, Separated and Organised Properly
+### Metrics and Analytics
 
-### Tips to Get Your Pull Request Accepted
-Making sure you follow the above conventions is important, but just the beginning. Follow these tips to better the chances of your pull request being accepted and pulled.
+#### Performance Monitoring
+```java
+/**
+ * Example of performance monitoring system
+ */
+public class PerformanceMonitor {
+    private final Map<String, Metric> metrics = new ConcurrentHashMap<>();
+    private final ScheduledExecutorService scheduler;
+    private final StructuredLogger logger;
+    
+    public PerformanceMonitor() {
+        this.logger = new StructuredLogger("Performance");
+        this.scheduler = Executors.newScheduledThreadPool(1);
+        startMonitoring();
+    }
+    
+    /**
+     * Records a metric value
+     * @param name Metric name
+     * @param value Metric value
+     */
+    public void recordMetric(String name, double value) {
+        Metric metric = metrics.computeIfAbsent(name, k -> new Metric(k));
+        metric.record(value);
+    }
+    
+    /**
+     * Records execution time
+     * @param name Operation name
+     * @param operation Operation to measure
+     * @return Operation result
+     */
+    public <T> T measureTime(String name, Supplier<T> operation) {
+        long startTime = System.nanoTime();
+        try {
+            T result = operation.get();
+            long endTime = System.nanoTime();
+            recordMetric(name + ".duration", (endTime - startTime) / 1_000_000.0); // Convert to milliseconds
+            return result;
+        } catch (Exception e) {
+            long endTime = System.nanoTime();
+            recordMetric(name + ".duration", (endTime - startTime) / 1_000_000.0);
+            recordMetric(name + ".errors", 1);
+            throw e;
+        }
+    }
+    
+    /**
+     * Gets metric statistics
+     * @param name Metric name
+     * @return Metric statistics
+     */
+    public MetricStatistics getStatistics(String name) {
+        Metric metric = metrics.get(name);
+        return metric != null ? metric.getStatistics() : null;
+    }
+    
+    private void startMonitoring() {
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                reportMetrics();
+            } catch (Exception e) {
+                logger.logError("Error reporting metrics", e);
+            }
+        }, 0, 60, TimeUnit.SECONDS);
+    }
+    
+    private void reportMetrics() {
+        for (Metric metric : metrics.values()) {
+            MetricStatistics stats = metric.getStatistics();
+            logger.logInfo("Metric " + metric.getName() + 
+                         ": count=" + stats.getCount() +
+                         ", avg=" + String.format("%.2f", stats.getAverage()) +
+                         ", min=" + String.format("%.2f", stats.getMin()) +
+                         ", max=" + String.format("%.2f", stats.getMax()));
+        }
+    }
+    
+    public void shutdown() {
+        scheduler.shutdown();
+        try {
+            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+                scheduler.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            scheduler.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
+    
+    private static class Metric {
+        private final String name;
+        private final AtomicLong count = new AtomicLong(0);
+        private final AtomicDouble sum = new AtomicDouble(0.0);
+        private final AtomicDouble min = new AtomicDouble(Double.MAX_VALUE);
+        private final AtomicDouble max = new AtomicDouble(Double.MIN_VALUE);
+        
+        public Metric(String name) {
+            this.name = name;
+        }
+        
+        public void record(double value) {
+            count.incrementAndGet();
+            sum.addAndGet(value);
+            min.updateAndGet(current -> Math.min(current, value));
+            max.updateAndGet(current -> Math.max(current, value));
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public MetricStatistics getStatistics() {
+            long countValue = count.get();
+            return new MetricStatistics(
+                countValue,
+                countValue > 0 ? sum.get() / countValue : 0.0,
+                min.get(),
+                max.get()
+            );
+        }
+    }
+    
+    public static class MetricStatistics {
+        private final long count;
+        private final double average;
+        private final double min;
+        private final double max;
+        
+        public MetricStatistics(long count, double average, double min, double max) {
+            this.count = count;
+            this.average = average;
+            this.min = min;
+            this.max = max;
+        }
+        
+        public long getCount() { return count; }
+        public double getAverage() { return average; }
+        public double getMin() { return min; }
+        public double getMax() { return max; }
+    }
+}
+```
 
-* Your change should [fit with Bukkit's goals](#does-the-change-fit-bukkits-goals).
-* Make sure you follow all of our conventions to the letter.
-* Make sure your code compiles under Java 6.
-* Check for misplaced whitespaces. It may be invisible, but [we notice](https://github.com/Bukkit/CraftBukkit/pull/1070).
-* Provide proper JavaDocs where appropriate.
-    * JavaDocs should detail every limitation, caveat and gotcha the code has.
-* Provide proper accompanying documentation where appropriate.
-* Test your code and provide testing material.
-    * For example: adding an event? Test it with a test plugin and provide us with that plugin and its source.
-* Make sure to follow coding best practises.
-* Your pull request should adhere to our [Pull Request Formatting Expectations](#pull-request-formatting-expectations).
-* **Note:** The project is put under a code freeze leading up to the release of a Minecraft update in order to give the Bukkit team a static code base to work on.
+### Internationalization
 
-## Useful Resources
-* [An example pull request demonstrating the things we look out for](https://github.com/Bukkit/CraftBukkit/pull/1070)
-* [Handy gist version of our Pull Request Format Template](https://gist.github.com/EvilSeph/35bb477eaa1dffc5f1d7)
-* [More information on contributing](http://wiki.bukkit.org/Getting_Involved)
-* [Leaky, Our Issue Tracker (JIRA)](http://leaky.bukkit.org)
-* [General GitHub documentation](http://help.github.com/)
-* [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
-* [Join us on IRC - #bukkitdev @ irc.esper.net](http://wiki.bukkit.org/IRC)
+#### Multi-language Support
+```java
+/**
+ * Example of internationalization system
+ */
+public class I18nManager {
+    private final Map<String, Map<String, String>> translations = new ConcurrentHashMap<>();
+    private final Map<UUID, String> playerLocales = new ConcurrentHashMap<>();
+    private final String defaultLocale;
+    private final StructuredLogger logger;
+    
+    public I18nManager(String defaultLocale) {
+        this.defaultLocale = defaultLocale;
+        this.logger = new StructuredLogger("I18n");
+        loadTranslations();
+    }
+    
+    /**
+     * Gets translated message
+     * @param key Message key
+     * @param locale Locale code
+     * @param args Message arguments
+     * @return Translated message
+     */
+    public String getMessage(String key, String locale, Object... args) {
+        Map<String, String> localeTranslations = translations.get(locale);
+        if (localeTranslations == null) {
+            localeTranslations = translations.get(defaultLocale);
+        }
+        
+        String message = localeTranslations != null ? localeTranslations.get(key) : null;
+        if (message == null) {
+            logger.logWarning("Missing translation for key: " + key + " in locale: " + locale);
+            return key; // Return key as fallback
+        }
+        
+        return args.length > 0 ? String.format(message, args) : message;
+    }
+    
+    /**
+     * Gets translated message for player
+     * @param player Player
+     * @param key Message key
+     * @param args Message arguments
+     * @return Translated message
+     */
+    public String getMessage(Player player, String key, Object... args) {
+        String locale = playerLocales.getOrDefault(player.getUniqueId(), defaultLocale);
+        return getMessage(key, locale, args);
+    }
+    
+    /**
+     * Sets player locale
+     * @param player Player
+     * @param locale Locale code
+     */
+    public void setPlayerLocale(Player player, String locale) {
+        playerLocales.put(player.getUniqueId(), locale);
+        logger.logInfo("Set locale for player " + player.getName() + " to " + locale);
+    }
+    
+    /**
+     * Sends translated message to player
+     * @param player Player
+     * @param key Message key
+     * @param args Message arguments
+     */
+    public void sendMessage(Player player, String key, Object... args) {
+        String message = getMessage(player, key, args);
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+    }
+    
+    private void loadTranslations() {
+        // Load translations from files or configuration
+        Map<String, String> enTranslations = new HashMap<>();
+        enTranslations.put("command.success", "Command executed successfully");
+        enTranslations.put("command.error", "Error executing command");
+        enTranslations.put("player.join", "%s joined the game");
+        enTranslations.put("player.leave", "%s left the game");
+        translations.put("en", enTranslations);
+        
+        Map<String, String> esTranslations = new HashMap<>();
+        esTranslations.put("command.success", "Comando ejecutado exitosamente");
+        esTranslations.put("command.error", "Error ejecutando comando");
+        esTranslations.put("player.join", "%s se unió al juego");
+        esTranslations.put("player.leave", "%s abandonó el juego");
+        translations.put("es", esTranslations);
+        
+        logger.logInfo("Loaded translations for " + translations.size() + " locales");
+    }
+}
+```
+
+---
+
+Thank you for contributing to Bukkit 1.21.11! Your help keeps this project alive and improving.
