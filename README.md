@@ -1,6 +1,6 @@
-# Bukkit 1.21.11 (Clean Version)
+# Bukkit 1.21.11 (Clean Fork)
 
-A clean implementation of the Bukkit API for Minecraft 1.21.11 without Bedrock support.
+A clean fork of the Bukkit API for Minecraft 1.21.11 without Bedrock support.
 
 ## Overview
 
