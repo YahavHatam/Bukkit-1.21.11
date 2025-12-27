@@ -1,71 +1,168 @@
-# How to Contribute
+# Contributing to Bukkit 1.21.11
 
-This is a clean fork of the Bukkit project for Minecraft 1.21.11. While we welcome contributions, this is primarily a maintenance fork focused on providing a stable Bukkit API without Bedrock support.
+Welcome to the Bukkit 1.21.11 clean fork! This is a community-driven project focused on maintaining a stable Bukkit API without Bedrock support.
 
-## Quick Guide
-1. Check existing [Issues](https://github.com/YahavHatam/Bukkit-1.21.11/issues) for your proposed change
-2. Fork the repository if you haven't done so already
-3. Make your changes in a new branch
-4. Test your changes thoroughly
-5. Push to your fork and submit a pull request
+## Quick Start
 
-## Getting Started
-- You'll need a free [GitHub account](https://github.com/signup/free)
-- Make sure to check existing issues before creating new ones
-- Fork the repository on GitHub
-- Create a descriptive issue if one doesn't already exist
+1. **Check existing issues** on GitHub before starting
+2. **Fork the repository** 
+3. **Create a descriptive branch** for your changes
+4. **Make your changes** following our guidelines
+5. **Test thoroughly** 
+6. **Submit a pull request** with clear description
 
-## Does the Change Fit This Fork's Goals?
-This fork aims to provide a clean, stable Bukkit API implementation. Consider:
+## What We Accept
 
-* Does it maintain API compatibility with Bukkit?
-* Does it fix a bug or improve existing functionality?
-* Is it a reasonable enhancement that doesn't break existing plugins?
-* Does it avoid exposing unnecessary implementation details?
+- **Bug fixes** that maintain API compatibility
+- **Performance improvements** 
+- **Documentation enhancements**
+- **Reasonable feature additions** that don't break existing plugins
+- **Code cleanup** and refactoring
 
-## Making the Changes
-* Create a branch on your fork where you'll be making your changes
-* Name your branch something relevant to the change you are making
-* Check for unnecessary whitespace with `git diff --check` before committing
-* Make sure your code meets [our requirements](#code-requirements)
-* Test your changes to make sure they actually address the issue
-* Make sure your code compiles under Java 21
+## Coding Standards
 
-### Code Requirements
-* We generally follow the [Sun/Oracle coding standards](http://www.oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html)
-* No tabs; use 4 spaces instead
-* No trailing whitespaces
-* No CRLF line endings, LF only
-* No 80 column limit or 'weird' midstatement newlines
-* Any major additions should have documentation ready and provided if applicable
-* Try to follow test driven development where applicable
-* There needs to be a new line at the end of every file
-* Imports should be organised by alphabetical order, separated and grouped by package
+### Requirements
+- **Java 21** compatibility
+- **4 spaces** for indentation (no tabs)
+- **No trailing whitespace**
+- **LF line endings** (not CRLF)
+- **Newline at end of every file**
+- **Alphabetical imports** grouped by package
 
-### Commit Message Format
-> Brief summary of changes
+### Example Import Organization
+```java
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-> Detailed description of what the change does, why it's needed, and how it addresses the issue. Keep lines under 78 characters.
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+```
 
-## Submitting the Changes
-* Push your changes to a topic branch in your fork
-* Submit a pull request to this repository
-* Make sure your pull request includes:
-  - Clear description of the change
-  - Testing results
-  - Any relevant documentation updates
+### Code Style
+- Follow standard Java conventions
+- Include Javadoc for public methods/classes
+- Keep methods focused and concise
+- Use descriptive variable names
+- Avoid magic numbers - use constants
 
-## Tips to Get Your Pull Request Accepted
-* Follow all coding conventions
-* Test your code thoroughly
-* Provide proper documentation
-* Ensure backward compatibility
-* Don't break existing functionality
+## Commit Guidelines
 
-## Useful Resources
-* [GitHub documentation](http://help.github.com/)
-* [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
-* [Java coding conventions](https://oracle.com/technetwork/java/javase/documentation/codeconvtoc-136057.html)
+### Format
+```
+Brief summary of changes
+
+Detailed description explaining what the change does, 
+why it's needed, and how it addresses the issue.
+Keep lines under 78 characters.
+```
+
+### Examples
+```
+Fix player teleportation validation
+
+Added null checks for teleport destination to prevent
+NullPointerException when teleporting to invalid locations.
+```
+
+```
+Add configuration option for spawn protection
+
+New config option 'spawn-protection-radius' allows server
+administrators to customize the protected spawn area size.
+```
+
+## Making Changes
+
+### Before You Start
+- Search existing issues and pull requests
+- Ensure your change fits project goals
+- Plan your approach to minimize impact
+
+### During Development
+- Make small, focused commits
+- Test your changes as you go
+- Ensure code compiles without errors
+- Check for unnecessary whitespace: `git diff --check`
+
+### Testing
+- Test with existing plugins if possible
+- Verify no regression in functionality
+- Test edge cases and error conditions
+- Include unit tests for new features
+
+## Pull Request Process
+
+### PR Title
+Use a clear, descriptive title:
+- `Fix: brief description of bug fix`
+- `Add: brief description of new feature` 
+- `Update: brief description of documentation change`
+
+### PR Description
+Include:
+- **Problem**: What issue does this address?
+- **Solution**: How does this PR fix it?
+- **Testing**: How did you test this change?
+- **Impact**: Any breaking changes or compatibility notes?
+
+### PR Checklist
+- [ ] Code compiles without errors
+- [ ] Follows coding standards
+- [ ] Includes tests if applicable
+- [ ] Documentation updated if needed
+- [ ] No breaking changes without justification
+
+## API Compatibility
+
+This fork maintains **full API compatibility** with Bukkit. When contributing:
+
+- **DO NOT** remove or change public API methods
+- **DO NOT** change method signatures
+- **DO NOT** remove events
+- **DO** add new methods and events
+- **DO** deprecate old methods before removal (if ever needed)
+
+## Examples
+
+### Adding a New Event
+```java
+/**
+ * Called when a player achieves something
+ */
+public class PlayerAchievementEvent extends PlayerEvent {
+    private final String achievement;
+    
+    public PlayerAchievementEvent(Player player, String achievement) {
+        super(player);
+        this.achievement = achievement;
+    }
+    
+    public String getAchievement() {
+        return achievement;
+    }
+}
+```
+
+### Firing an Event
+```java
+PlayerAchievementEvent event = new PlayerAchievementEvent(player, "first.join");
+Bukkit.getServer().getPluginManager().callEvent(event);
+```
+
+## Getting Help
+
+- **GitHub Issues**: Report bugs and request features
+- **Pull Requests**: For code contributions
+- **Discussions**: For questions and general discussion
 
 ## License
-Contributions maintain the same license as the original Bukkit project.
+
+By contributing, you agree that your contributions will be licensed under the same license as the original Bukkit project.
+
+---
+
+Thank you for contributing to Bukkit 1.21.11! Your help keeps this project alive and improving.
