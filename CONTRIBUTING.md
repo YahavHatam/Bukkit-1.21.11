@@ -163,7 +163,7 @@ Bukkit.getServer().getPluginManager().callEvent(event);
 
 By contributing, you agree that your contributions will be licensed under the same license as the original Bukkit project.
 
-## Advanced Development Guidelines
+## Development Guidelines
 
 ### Plugin API Design Principles
 
@@ -652,16 +652,16 @@ public class StructuredLogger {
 
 ### Configuration Management
 
-#### Advanced Configuration
+#### Configuration Examples
 ```java
 /**
- * Example of advanced configuration management
+ * Example of configuration management
  */
-public class AdvancedConfiguration extends FileConfiguration {
+public class Configuration extends FileConfiguration {
     private final Map<String, Object> defaults;
     private final Set<String> requiredKeys;
     
-    public AdvancedConfiguration() {
+    public Configuration() {
         this.defaults = new HashMap<>();
         this.requiredKeys = new HashSet<>();
         initializeDefaults();
@@ -970,12 +970,12 @@ public class ChunkManager {
 /**
  * Example of comprehensive plugin lifecycle management
  */
-public abstract class AdvancedPlugin extends JavaPlugin {
+public abstract class Plugin extends JavaPlugin {
     private final List<ManagedService> services = new ArrayList<>();
     private final StructuredLogger logger;
     private volatile boolean enabled = false;
     
-    public AdvancedPlugin() {
+    public Plugin() {
         this.logger = new StructuredLogger(getName());
     }
     
@@ -1106,10 +1106,10 @@ public abstract class AdvancedPlugin extends JavaPlugin {
 
 ### Command System
 
-#### Advanced Command Handling
+#### Command Handling
 ```java
 /**
- * Example of advanced command system
+ * Example of command system
  */
 public class CommandManager {
     private final Map<String, CommandExecutor> commands = new ConcurrentHashMap<>();
